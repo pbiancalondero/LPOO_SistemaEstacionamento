@@ -9,5 +9,5 @@ package model;
  * @author paula
  */
 public enum Marca {
-    CHEVROLET, FIAT, HONDA, FORD, RENAULT, YAMAHA, HYUNDAI;
+    CHEVROLET, FIAT, HONDA, FORD, RENAULT, HYUNDAI, YAMAHA;
 }

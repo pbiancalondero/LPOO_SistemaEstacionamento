@@ -4,31 +4,62 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  *
  * @author paula
  */
-public class Pessoa {
+@Entity
+@Table(name = "tb_pessoa")
+public class Pessoa implements Serializable {
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    
+    @Id
     private int id;
+    
+    @Column(name = "nome", length = 50, nullable = false)
     private String nome;
+    
+    @Column(name = "fone", length = 11, nullable = false)
     private String fone;
+    
+    @Column(name = "email", length = 25, nullable = false)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    private VinculoPessoa vinculoPessoa;
+   
+    //private List<Veiculo> listaVeiculos; --> Comentar para implementar esse relacionamento futuramente
+    // Getters, Setters e outros métodos
     
-    VínculoPessoa vínculoPessoa;
+   
     
-    private List<Veículo> listaVeículos;
+    //private List<Veiculo> listaVeiculos;
+
+    /*public Pessoa() {
+        listaVeiculos = new ArrayList<>();
+    }*/
     
-    public Pessoa(){
-        listaVeículos = new ArrayList<>();
-    }
+    /*
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;
@@ -54,20 +85,21 @@ public class Pessoa {
         this.email = email;
     }
 
-    public VínculoPessoa getVínculoPessoa() {
-        return vínculoPessoa;
+    public VinculoPessoa getVinculoPessoa() {
+        return vinculoPessoa;
     }
 
-    public void setVínculoPessoa(VínculoPessoa vínculoPessoa) {
-        this.vínculoPessoa = vínculoPessoa;
+    public void setVinculoPessoa(VinculoPessoa vinculoPessoa) {
+        this.vinculoPessoa = vinculoPessoa;
     }
     
-    public void addVeículo(Veículo vei){
-        listaVeículos.add(vei);
+    public void addVeiculo(Veiculo vei){
+        listaVeiculos.add(vei);
     }
 
-    public List<Veículo> getListaVeículos() {
-        return listaVeículos;
-    }
+    public List<Veiculo> getListaVeiculos() {
+        return listaVeiculos;
+    }*/
+    
     
 }

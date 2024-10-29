@@ -8,6 +8,6 @@ package model;
  *
  * @author paula
  */
-public enum Tipo {
+public enum TipoMovimentacao {
     ENTRADA, SAÍDA;
 }

@@ -8,6 +8,6 @@ package model;
  *
  * @author paula
  */
-public enum VínculoPessoa {
-    SERVIDOR, ALUNO, TERCEIRIZADO, VISITANTE;
+public enum TipoVeiculo {
+    CARRO, MOTOCICLETA;
 }
