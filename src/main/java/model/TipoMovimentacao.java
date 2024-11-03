@@ -9,5 +9,5 @@ package model;
  * @author paula
  */
 public enum TipoMovimentacao {
-    ENTRADA, SAÍDA;
+    ENTRADA, SAIDA;
 }

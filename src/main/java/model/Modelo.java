@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 /**
@@ -31,7 +33,7 @@ public class Modelo implements Serializable{
     @Enumerated(EnumType.STRING)
     private Marca marca;
 
-    /*public int getId() {
+    public int getId() {
         return id;
     }
 
@@ -53,7 +55,7 @@ public class Modelo implements Serializable{
 
     public void setMarca(Marca marca) {
         this.marca = marca;
-    }*/
+    }
     
     
 }

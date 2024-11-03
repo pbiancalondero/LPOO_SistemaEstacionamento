@@ -4,16 +4,8 @@
  */
 package model;
 
-import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
 
 /**
  *
@@ -21,16 +13,14 @@ import javax.persistence.Table;
  */
 
 @Entity
-@DiscriminatorValue("info")
-public class VeiOficial extends Veiculo implements Serializable {
+@DiscriminatorValue("OFICIAL")
+public class VeiOficial extends Veiculo{
     
-    @Column(name = "renavan", length = 11, nullable = false)
     private String renavan;
     
-    @Column(name = "chassi", length = 17, nullable = false)
     private String chassi;
 
-    /*public String getRenavan() {
+    public String getRenavan() {
         return renavan;
     }
 
@@ -44,5 +34,5 @@ public class VeiOficial extends Veiculo implements Serializable {
 
     public void setChassi(String chassi) {
         this.chassi = chassi;
-    }*/
+    }
 }

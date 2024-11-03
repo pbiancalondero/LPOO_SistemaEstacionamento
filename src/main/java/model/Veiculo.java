@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,6 +20,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import org.hibernate.annotations.ManyToAny;
 
@@ -29,8 +31,8 @@ import org.hibernate.annotations.ManyToAny;
 @Entity
 @Table(name = "tb_veiculo")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "info")
-public  abstract class Veiculo implements Serializable{
+@DiscriminatorColumn(name = "tipo_veiculo", discriminatorType = DiscriminatorType.STRING)
+public class Veiculo implements Serializable{
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     private int id;
@@ -44,23 +46,29 @@ public  abstract class Veiculo implements Serializable{
     @Enumerated(EnumType.STRING)
     private TipoVeiculo tipoVeiculo;
     
-    /*
+    
     @ManyToOne
     @JoinColumn(name = "modelo_id")
     private Modelo modelo;
-//    private List<EntradaSaida> listaMovimentacoes;
-//    private Pessoa proprietario;
+    
+    @OneToMany(mappedBy = "veiculo")
+    private List<EntradaSaida> listaMovimentacoes;
+    
+    
+    @ManyToOne
+    @JoinColumn(name = "veiculo_proprietario")
+    private Pessoa proprietario;
     
     
 
     public Veiculo() {
-//        listaMovimentacoes = new ArrayList<>();
+        listaMovimentacoes = new ArrayList<>();
     }
 
     public Veiculo(String placa, TipoVeiculo tipoVeiculo) {
         this.placa = placa;
         this.tipoVeiculo = tipoVeiculo;
-//        listaMovimentacoes = new ArrayList<>();
+        listaMovimentacoes = new ArrayList<>();
     }
     
     
@@ -98,10 +106,10 @@ public  abstract class Veiculo implements Serializable{
         this.tipoVeiculo = tipoVeiculo;
     }
     
-//    public void addMovimentacao(EntradaSaida movimentacao){
-//        listaMovimentacoes.add(movimentacao);
-//    }
-//
+    public void addMovimentacao(EntradaSaida movimentacao){
+       listaMovimentacoes.add(movimentacao);
+   }
+
     public Modelo getModelo() {
         return modelo;
     }
@@ -110,18 +118,18 @@ public  abstract class Veiculo implements Serializable{
         this.modelo = modelo;
     }
 
-//    public Pessoa getProprietario() {
-//        return proprietario;
-//    }
-//
-//    public void setProprietario(Pessoa proprietario) {
-//        this.proprietario = proprietario;
-//    }
-//
-//    public List<EntradaSaida> getListaMovimentacoes() {
-//        return listaMovimentacoes;
-//    }
-//    
-    */
+    public Pessoa getProprietario() {
+        return proprietario;
+    }
+
+    public void setProprietario(Pessoa proprietario) {
+        this.proprietario = proprietario;
+    }
+
+    public List<EntradaSaida> getListaMovimentacoes() {
+        return listaMovimentacoes;
+    }
+    
+    
     
 }

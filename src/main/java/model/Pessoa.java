@@ -7,6 +7,7 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,7 +15,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
 
 /**
  *
@@ -23,35 +26,36 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tb_pessoa")
 public class Pessoa implements Serializable {
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    
     
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     
-    @Column(name = "nome", length = 50, nullable = false)
+    @Column(length = 50, nullable = false)
     private String nome;
     
-    @Column(name = "fone", length = 11, nullable = false)
+    @Column(length = 20)
     private String fone;
     
-    @Column(name = "email", length = 25, nullable = false)
+    @Column(length = 50)
     private String email;
 
     @Enumerated(EnumType.STRING)
     private VinculoPessoa vinculoPessoa;
    
-    //private List<Veiculo> listaVeiculos; --> Comentar para implementar esse relacionamento futuramente
-    // Getters, Setters e outros métodos
     
-   
+    @OneToMany(mappedBy = "proprietario", cascade = CascadeType.ALL)
+    private List<Veiculo> listaVeiculos; 
     
-    //private List<Veiculo> listaVeiculos;
+    
+  
 
-    /*public Pessoa() {
+    public Pessoa() {
         listaVeiculos = new ArrayList<>();
-    }*/
+    }
     
-    /*
+    
 
     public int getId() {
         return id;
@@ -99,7 +103,7 @@ public class Pessoa implements Serializable {
 
     public List<Veiculo> getListaVeiculos() {
         return listaVeiculos;
-    }*/
+    }
     
     
 }
