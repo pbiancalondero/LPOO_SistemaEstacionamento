@@ -27,6 +27,7 @@ public class TelaPessoa extends javax.swing.JFrame {
         
         jpa = new PersistenciaJPA();
         carregarPessoasCadastradas();
+        carregarVinculos();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -57,7 +58,11 @@ public class TelaPessoa extends javax.swing.JFrame {
 
         lblBuscaNome.setText("Nome: ");
 
-        cmbVinculoPessoa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbVinculoPessoa.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbVinculoPessoaItemStateChanged(evt);
+            }
+        });
         cmbVinculoPessoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cmbVinculoPessoaActionPerformed(evt);
@@ -69,6 +74,14 @@ public class TelaPessoa extends javax.swing.JFrame {
         txtBuscaNome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtBuscaNomeActionPerformed(evt);
+            }
+        });
+        txtBuscaNome.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtBuscaNomeKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscaNomeKeyReleased(evt);
             }
         });
 
@@ -126,8 +139,18 @@ public class TelaPessoa extends javax.swing.JFrame {
         });
 
         btnEditarPessoa.setText("Editar");
+        btnEditarPessoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarPessoaActionPerformed(evt);
+            }
+        });
 
         btnRemoverPessoa.setText("Remover");
+        btnRemoverPessoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverPessoaActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout areaBotoesLayout = new javax.swing.GroupLayout(areaBotoes);
         areaBotoes.setLayout(areaBotoesLayout);
@@ -184,24 +207,94 @@ public class TelaPessoa extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBuscaNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscaNomeActionPerformed
-  
-    }//GEN-LAST:event_txtBuscaNomeActionPerformed
-
     private void cmbVinculoPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbVinculoPessoaActionPerformed
   
     }//GEN-LAST:event_cmbVinculoPessoaActionPerformed
 
     private void btnNovaPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovaPessoaActionPerformed
-        TelaCadastroPessoa telaCadastro = new TelaCadastroPessoa(this, rootPaneCheckingEnabled);
+        TelaCadastroPessoa telaCadastro
+                = new TelaCadastroPessoa(this, rootPaneCheckingEnabled);
         telaCadastro.setVisible(true);
-        
+
         carregarPessoasCadastradas();
+
     }//GEN-LAST:event_btnNovaPessoaActionPerformed
 
+    private void btnRemoverPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverPessoaActionPerformed
+        Pessoa pessoaSel = lstPessoas.getSelectedValue();
+        if (pessoaSel != null) {
+            System.out.println("Pessoa: " + pessoaSel.getId());
+            try {
+                jpa.conexaoAberta();
+                int delOp = JOptionPane.showConfirmDialog(this,
+                        "Tem certeza que deseja remover " + pessoaSel.getNome() + "?");
+                if (delOp == JOptionPane.YES_OPTION) {
+                    jpa.remover(pessoaSel);
+                }
+                jpa.fecharConexao();
+                carregarPessoasCadastradas();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this,
+                        "Erro ao remover pessoa " + pessoaSel + "\n" + e);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione uma pessoa para remover");
+        }
+    }//GEN-LAST:event_btnRemoverPessoaActionPerformed
+
+    private void btnEditarPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPessoaActionPerformed
+        Pessoa pessoaSel = lstPessoas.getSelectedValue();
+        if (pessoaSel != null) {
+            TelaCadastroPessoa telaEdt = new TelaCadastroPessoa(this, rootPaneCheckingEnabled);
+            telaEdt.setPessoa(pessoaSel);
+            telaEdt.setVisible(true);
+            
+            
+            carregarPessoasCadastradas();
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "Selecione uma pessoa para Editar");
+    }                                               
+    }//GEN-LAST:event_btnEditarPessoaActionPerformed
+
+    private void cmbVinculoPessoaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbVinculoPessoaItemStateChanged
+        VinculoPessoa vinculoSel = (VinculoPessoa) cmbVinculoPessoa.getSelectedItem();
+        if (vinculoSel == null) {
+            carregarPessoasCadastradas();
+        } else {
+            jpa.conexaoAberta();
+            DefaultListModel modeloLista = new DefaultListModel();
+            modeloLista.addAll(jpa.getPessoas(vinculoSel));
+            lstPessoas.setModel(modeloLista);
+            jpa.fecharConexao();
+        }
+    }//GEN-LAST:event_cmbVinculoPessoaItemStateChanged
+
+    private void txtBuscaNomeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscaNomeKeyReleased
+        if(txtBuscaNome.getText().trim().isEmpty()){
+            carregarPessoasCadastradas();
+        } else{
+            jpa.conexaoAberta();
+            DefaultListModel modeloLista = new DefaultListModel();
+            modeloLista.addAll(jpa.getPessoas(txtBuscaNome.getText().trim()));
+            System.out.println("Pessoas carregadas: "+jpa.getPessoas(txtBuscaNome.getText().trim()));
+            lstPessoas.setModel(modeloLista);
+            jpa.fecharConexao();
+        }
+    
+    }//GEN-LAST:event_txtBuscaNomeKeyReleased
+
+    private void txtBuscaNomeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscaNomeKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBuscaNomeKeyPressed
+
+    private void txtBuscaNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscaNomeActionPerformed
+
+    }//GEN-LAST:event_txtBuscaNomeActionPerformed
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -253,18 +346,24 @@ public class TelaPessoa extends javax.swing.JFrame {
         });
     }
     
-    public void carregarPessoasCadastradas(){
+    public void carregarPessoasCadastradas() {
         jpa.conexaoAberta();
         
-        
-        DefaultListModel modeloLista = new DefaultListModel();
+         DefaultListModel modeloLista = new DefaultListModel();
         modeloLista.addAll(jpa.getPessoas());
         lstPessoas.setModel(modeloLista);
         
-        jpa.fecharConexao();
-        
-        
+         jpa.fecharConexao();
+         
+         }
+    public void carregarVinculos() {
+        cmbVinculoPessoa.removeAllItems();
+        cmbVinculoPessoa.addItem(null);
+        for (VinculoPessoa item : VinculoPessoa.values()) {
+            cmbVinculoPessoa.addItem(item);
+        }
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel areaBotoes;
     private javax.swing.JPanel areaFiltros;
@@ -272,7 +371,7 @@ public class TelaPessoa extends javax.swing.JFrame {
     private javax.swing.JButton btnEditarPessoa;
     private javax.swing.JButton btnNovaPessoa;
     private javax.swing.JButton btnRemoverPessoa;
-    private javax.swing.JComboBox<String> cmbVinculoPessoa;
+    private javax.swing.JComboBox<VinculoPessoa> cmbVinculoPessoa;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblBuscaNome;
     private javax.swing.JLabel lblBuscaVinculo;

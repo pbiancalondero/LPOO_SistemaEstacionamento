@@ -30,6 +30,7 @@ public class TelaCadastroPessoa extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         jpa = new PersistenciaJPA();
+        carregarVinculos();
     }
 
 
@@ -96,7 +97,6 @@ public class TelaCadastroPessoa extends javax.swing.JDialog {
             }
         });
 
-        cmbVinculoPessoa.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbVinculoPessoa.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cmbVinculoPessoaItemStateChanged(evt);
@@ -194,12 +194,15 @@ public class TelaCadastroPessoa extends javax.swing.JDialog {
         pessoa.setNome(txtNome.getText());
         pessoa.setFone(txtFone.getText());
         pessoa.setEmail(txtEmail.getText());
+        pessoa.setVinculoPessoa((VinculoPessoa)cmbVinculoPessoa.getSelectedItem());
         
         jpa.conexaoAberta();
         try {
             jpa.persist(pessoa);
+            System.out.println("Pessoa cadastrada com sucesso");
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(TelaCadastroPessoa.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Erro ao persistir pessoa: "+pessoa+" \n Erro: "+ex);
         }
         jpa.fecharConexao();
         dispose();
@@ -282,11 +285,18 @@ public class TelaCadastroPessoa extends javax.swing.JDialog {
         });
     }
 
+    public void carregarVinculos(){
+        cmbVinculoPessoa.removeAllItems();
+        for(VinculoPessoa item: VinculoPessoa.values()){
+            cmbVinculoPessoa.addItem(item);
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JComboBox<String> cmbVinculoPessoa;
+    private javax.swing.JComboBox<VinculoPessoa> cmbVinculoPessoa;
     private javax.swing.JLabel lblEmail;
     private javax.swing.JLabel lblFone;
     private javax.swing.JLabel lblNome;
@@ -303,6 +313,10 @@ public Pessoa getPessoa() {
 
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
+        txtNome.setText(pessoa.getNome());
+        txtFone.setText(pessoa.getFone());
+        txtEmail.setText(pessoa.getEmail());
+        cmbVinculoPessoa.setSelectedItem(pessoa.getVinculoPessoa());
     }
     
     
