@@ -24,7 +24,6 @@ public class MainJFrame extends javax.swing.JFrame {
      */
     @SuppressWarnings("unchecked")
     
-    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -35,6 +34,7 @@ public class MainJFrame extends javax.swing.JFrame {
         menuMovimentacoes = new javax.swing.JMenu();
         miEntradaVeiculo = new javax.swing.JMenuItem();
         miSaidaVeiculo = new javax.swing.JMenuItem();
+        miMovDia = new javax.swing.JMenuItem();
         menuAjuda = new javax.swing.JMenu();
         miSobre = new javax.swing.JMenuItem();
 
@@ -61,12 +61,25 @@ public class MainJFrame extends javax.swing.JFrame {
         jMenuBar1.add(menuCadastro);
 
         menuMovimentacoes.setText("Movimentações");
+        menuMovimentacoes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuMovimentacoesActionPerformed(evt);
+            }
+        });
 
         miEntradaVeiculo.setText("Entrada");
         menuMovimentacoes.add(miEntradaVeiculo);
 
         miSaidaVeiculo.setText("Saída");
         menuMovimentacoes.add(miSaidaVeiculo);
+
+        miMovDia.setText("Movimentações do dia");
+        miMovDia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miMovDiaActionPerformed(evt);
+            }
+        });
+        menuMovimentacoes.add(miMovDia);
 
         jMenuBar1.add(menuMovimentacoes);
 
@@ -105,13 +118,22 @@ public class MainJFrame extends javax.swing.JFrame {
 
     private void miVeiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miVeiculoActionPerformed
          TelaVeiculo telaVeiculo = new TelaVeiculo();
-        telaVeiculo.setVisible(true);
+         telaVeiculo.setVisible(true);
     }//GEN-LAST:event_miVeiculoActionPerformed
 
     private void miSobreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miSobreActionPerformed
         TelaSobre telaSobre = new TelaSobre(this,  rootPaneCheckingEnabled);
         telaSobre.setVisible(true);
     }//GEN-LAST:event_miSobreActionPerformed
+
+    private void menuMovimentacoesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuMovimentacoesActionPerformed
+
+    }//GEN-LAST:event_menuMovimentacoesActionPerformed
+
+    private void miMovDiaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miMovDiaActionPerformed
+        TelaMovimentacoesDia telaMovimentacoes = new TelaMovimentacoesDia();
+       telaMovimentacoes.setVisible(true);
+    }//GEN-LAST:event_miMovDiaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -154,6 +176,7 @@ public class MainJFrame extends javax.swing.JFrame {
     private javax.swing.JMenu menuCadastro;
     private javax.swing.JMenu menuMovimentacoes;
     private javax.swing.JMenuItem miEntradaVeiculo;
+    private javax.swing.JMenuItem miMovDia;
     private javax.swing.JMenuItem miPessoa;
     private javax.swing.JMenuItem miSaidaVeiculo;
     private javax.swing.JMenuItem miSobre;

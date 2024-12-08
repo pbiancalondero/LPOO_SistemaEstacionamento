@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import java.util.stream.Collectors;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import model.VeiOficial;
 import model.Veiculo;
 
 /**
@@ -17,16 +18,14 @@ import model.Veiculo;
  * @author paula
  */
 public class TelaVeiculo extends javax.swing.JFrame {
-    PersistenciaJPA jpa;
+    PersistenciaJPA jpa = new PersistenciaJPA();
 
     /**
      * Creates new form TelaVeiculo
      */
     public TelaVeiculo() {
         initComponents();
-        jpa = new PersistenciaJPA();
-        
-        carregarVeiculosCadastrados();
+        loadVeiculosCadastrados();
         
     }
 
@@ -49,13 +48,11 @@ public class TelaVeiculo extends javax.swing.JFrame {
         btnEditar = new javax.swing.JButton();
         btnRemover = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblTable = new javax.swing.JTable();
+        tblVeiculos = new javax.swing.JTable();
         lblPlaca = new javax.swing.JLabel();
         txtBuscaPlaca = new javax.swing.JTextField();
-        lblOficial = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        checkOficial = new javax.swing.JCheckBox();
-        checkNaoOficial = new javax.swing.JCheckBox();
+        ckbVeiOficial = new javax.swing.JCheckBox();
 
         jRadioButtonMenuItem1.setSelected(true);
         jRadioButtonMenuItem1.setText("jRadioButtonMenuItem1");
@@ -89,7 +86,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
             }
         });
 
-        tblTable.setModel(new javax.swing.table.DefaultTableModel(
+        tblVeiculos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -100,12 +97,12 @@ public class TelaVeiculo extends javax.swing.JFrame {
                 "Placa", "Proprietário", "Oficial"
             }
         ));
-        tblTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        tblVeiculos.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                tblTableKeyReleased(evt);
+                tblVeiculosKeyReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(tblTable);
+        jScrollPane1.setViewportView(tblVeiculos);
 
         lblPlaca.setText("Placa:");
 
@@ -114,17 +111,18 @@ public class TelaVeiculo extends javax.swing.JFrame {
                 txtBuscaPlacaActionPerformed(evt);
             }
         });
-
-        lblOficial.setText("Oficial:");
-
-        checkOficial.setText("Oficial");
-        checkOficial.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                checkOficialActionPerformed(evt);
+        txtBuscaPlaca.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscaPlacaKeyReleased(evt);
             }
         });
 
-        checkNaoOficial.setText("Não Oficial");
+        ckbVeiOficial.setText("Veículo Oficial");
+        ckbVeiOficial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ckbVeiOficialActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -132,18 +130,14 @@ public class TelaVeiculo extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(checkOficial)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(checkNaoOficial)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addComponent(ckbVeiOficial)
+                .addContainerGap(110, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(checkOficial)
-                    .addComponent(checkNaoOficial))
+                .addComponent(ckbVeiOficial)
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -160,13 +154,11 @@ public class TelaVeiculo extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtBuscaPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblTitulo))
-                .addGap(41, 41, 41)
-                .addComponent(lblOficial)
-                .addGap(12, 12, 12)
+                .addGap(90, 90, 90)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -191,11 +183,7 @@ public class TelaVeiculo extends javax.swing.JFrame {
                             .addComponent(txtBuscaPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(23, 23, 23)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(15, 15, 15)
-                                .addComponent(lblOficial))
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46)
@@ -210,85 +198,92 @@ public class TelaVeiculo extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        TelaCadastroVeiculo telaCadastroVei
-                = new TelaCadastroVeiculo(this, rootPaneCheckingEnabled);
-        telaCadastroVei.setVisible(true);
+        TelaCadastroVeiculo tela = new TelaCadastroVeiculo(this, rootPaneCheckingEnabled);
+        tela.setVisible(true);
 
-        carregarVeiculosCadastrados();
+        loadVeiculosCadastrados();
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverActionPerformed
-        int row = tblTable.getSelectedRow();
-        if (row >= 0) {
-            Veiculo veiSel = (Veiculo) tblTable.getValueAt(row, 0);
-            System.out.println("Veículo: " + veiSel.getId());
-            try {
+        Veiculo veiculoSel = getVeiculoSelecionado();
+        if (veiculoSel != null) {
+            int delOp = JOptionPane.showConfirmDialog(rootPane, "Tem certeza que deseja remover veículo " + veiculoSel + "?");
+            if (delOp == JOptionPane.YES_OPTION) {
                 jpa.conexaoAberta();
-                int delOp = JOptionPane.showConfirmDialog(this,
-                        "Tem certeza que deseja remover " + veiSel.getPlaca() + "?");
-                if (delOp == JOptionPane.YES_OPTION) {
-                    jpa.remover(veiSel);
+                try {
+
+                    // Passo 1: Desvincular relacionamentos e salvar as alterações
+                    if (veiculoSel.getProprietario() != null || veiculoSel.getModelo() != null) {
+                        veiculoSel.setProprietario(null);
+                        veiculoSel.setModelo(null);
+                        
+                        /*
+                        Após setar os relacionamentos para null, o estado do objeto pode ter sido alterado, 
+                        e ele não está mais sendo tratado como parte do contexto de persistência (EntityManager). 
+                        Isso ocorre porque as modificações não foram sincronizadas com o banco antes da tentativa de remoção.
+                        
+                        Ao modificar os relacionamentos (setar para null), essas alterações precisam ser sincronizadas com o banco antes de tentar a remoção
+                        */
+                        jpa.persist(veiculoSel);
+                        jpa.fecharConexao();
+                        
+                        jpa.conexaoAberta();
+                    }
+
+                    // Passo 2: Remover o objeto
+                    jpa.remover(veiculoSel);
+                    JOptionPane.showMessageDialog(rootPane, "Veículo removido com sucesso!");
+
+                    loadVeiculosCadastrados(); // Atualiza a tabela
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println("Erro ao remover veículo " + veiculoSel + "\nErro: " + e.getMessage());
+                } finally {
+                    jpa.fecharConexao();
                 }
-                jpa.fecharConexao();
-                carregarVeiculosCadastrados();
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this,
-                        "Erro ao remover pessoa " + veiSel + "\n" + e);
+
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecione um veículo para remover");
         }
-       
     }//GEN-LAST:event_btnRemoverActionPerformed
 
-    private void tblTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblTableKeyReleased
-        String textoPlaca = txtBuscaPlaca.getText(); // txtBuscaPlaca é o campo de texto para buscar pela placa
-    List<Veiculo> veiculosFiltrados;
+    private void tblVeiculosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblVeiculosKeyReleased
+        
+    }//GEN-LAST:event_tblVeiculosKeyReleased
 
-    try {
+    private void ckbVeiOficialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ckbVeiOficialActionPerformed
+        boolean filtrarOficiais = ckbVeiOficial.isSelected();
+
         jpa.conexaoAberta();
-        veiculosFiltrados = jpa.getVeiculos(textoPlaca); // Método que retorna veículos filtrados pela placa
+        // Busca os veículos com base no filtro
+        loadVeiculosCadastrados(jpa.getVeiculos(filtrarOficiais));
         jpa.fecharConexao();
-
-        carregarVeiculosCadastrados(veiculosFiltrados); // Chamada do método sobrecarregado
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Erro ao filtrar veículos: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-    }
-    }//GEN-LAST:event_tblTableKeyReleased
-
-    private void checkOficialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOficialActionPerformed
-        boolean somenteOficiais = checkOficial.isSelected(); // checkOficial é a checkbox
-    List<Veiculo> veiculosFiltrados;
-
-    try {
-        jpa.conexaoAberta();
-        veiculosFiltrados = jpa.getVeiculosOficiais(somenteOficiais); // Método que retorna veículos filtrados por oficialidade
-        jpa.fecharConexao();
-
-        carregarVeiculosCadastrados(veiculosFiltrados); // Chamada do método sobrecarregado
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Erro ao filtrar veículos oficiais: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-    }
-    }//GEN-LAST:event_checkOficialActionPerformed
+    }//GEN-LAST:event_ckbVeiOficialActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
- int row = tblTable.getSelectedRow();
-        if (row >= 0) {
-            Veiculo veiSel = (Veiculo) tblTable.getValueAt(row, 0);
-            TelaCadastroVeiculo telaEdt = new TelaCadastroVeiculo(this, rootPaneCheckingEnabled);
-            telaEdt.setVeiculo(veiSel);
-            telaEdt.setVisible(true);
-            
-            
-            carregarVeiculosCadastrados();
-            
-        } else {
-            JOptionPane.showMessageDialog(this, "Selecione um veículo para Editar");
+ Veiculo veiculoSel = getVeiculoSelecionado();
+        if (veiculoSel != null) {
+            TelaCadastroVeiculo tela = new TelaCadastroVeiculo(this, rootPaneCheckingEnabled);
+            tela.setVeiculo(veiculoSel);
+            tela.setVisible(true);
+            loadVeiculosCadastrados(); // Atualiza a tabela após edição
+
+        
     }          }//GEN-LAST:event_btnEditarActionPerformed
 
     private void txtBuscaPlacaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscaPlacaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtBuscaPlacaActionPerformed
+
+    private void txtBuscaPlacaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscaPlacaKeyReleased
+        if (txtBuscaPlaca.getText().trim().isEmpty()) {
+            loadVeiculosCadastrados();
+        } else {
+            jpa.conexaoAberta();
+            loadVeiculosCadastrados(jpa.getVeiculos(txtBuscaPlaca.getText().trim()));
+
+            jpa.fecharConexao();
+        }
+    }//GEN-LAST:event_txtBuscaPlacaKeyReleased
 
     /**
      * @param args the command line arguments
@@ -344,52 +339,78 @@ public class TelaVeiculo extends javax.swing.JFrame {
         });
     }
     
-    public void carregarVeiculosCadastrados() {
-    try {
+    public void loadVeiculosCadastrados() {
+        // Abre a conexão
         jpa.conexaoAberta();
-        List<Veiculo> veiculos = jpa.getVeiculos();
-        DefaultTableModel model = (DefaultTableModel) tblTable.getModel();
-        model.setRowCount(0); // Limpa a tabela
+        try {
 
-        for (Veiculo v : veiculos) {
-            model.addRow(new Object[]{v.getPlaca(), v.getProprietario().getNome()});
+            // Busca os veículos cadastrados
+            List<Veiculo> listaVeiculos = jpa.getVeiculos(); // Método criado no DAO
+
+            // Obtém o modelo da tabela
+            DefaultTableModel modeloTabela = (DefaultTableModel) tblVeiculos.getModel();
+
+            // Limpa a tabela 
+            modeloTabela.setRowCount(0);
+
+            // Adiciona os veículos ao modelo da tabela
+            for (Veiculo veiculo : listaVeiculos) {
+                Object[] linha = {
+                    veiculo,
+                    veiculo.getProprietario() != null ? veiculo.getProprietario().getNome() : "",
+                    veiculo instanceof VeiOficial ? "Sim" : "Não"
+                };
+                modeloTabela.addRow(linha);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar os veículos: " + e.getMessage());
+        } finally {
+            // Fecha a conexão
+            jpa.fecharConexao();
         }
-        jpa.fecharConexao();
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Erro ao carregar veículos: " + e.getMessage());
-    }
-}
-    
-    public void carregarVeiculosCadastrados(List<Veiculo> veiculosFiltrados) {
-    // Limpa a tabela antes de carregar os novos dados
-    DefaultTableModel model = (DefaultTableModel) tblTable.getModel();
-    model.setRowCount(0); // Limpa todas as linhas
 
-    // Verifica se a lista não está vazia
-    if (veiculosFiltrados != null && !veiculosFiltrados.isEmpty()) {
-        // Adiciona os veículos na tabela
-        for (Veiculo veiculo : veiculosFiltrados) {
-            model.addRow(new Object[]{
-                veiculo.getPlaca(),
-                veiculo.getModelo(),
-                veiculo.getCor()
-    
-            });
+    }
+
+    public void loadVeiculosCadastrados(List<Veiculo> listaVeiculos) {
+
+        try {
+
+            // Obtém o modelo da tabela
+            DefaultTableModel modeloTabela = (DefaultTableModel) tblVeiculos.getModel();
+
+            // Limpa a tabela 
+            modeloTabela.setRowCount(0);
+
+            // Adiciona os veículos ao modelo da tabela
+            for (Veiculo veiculo : listaVeiculos) {
+                Object[] linha = {
+                    veiculo,
+                    veiculo.getProprietario() != null ? veiculo.getProprietario().getNome() : "",
+                    veiculo instanceof VeiOficial ? "Sim" : "Não"
+                };
+                modeloTabela.addRow(linha);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar os veículos: " + e.getMessage());
         }
-    } else {
-        JOptionPane.showMessageDialog(this, "Nenhum veículo encontrado!", "Informação", JOptionPane.INFORMATION_MESSAGE);
+
     }
-}
-    
-    /*private void atualizarTabela(List<Veiculo> veiculos) {
-    DefaultTableModel model = (DefaultTableModel) tblTable.getModel(); 
-    model.setRowCount(0); // Limpa a tabela antes de adicionar os novos dados
 
-    for (Veiculo v : veiculos) {
-        model.addRow(new Object[]{v.getPlaca(), v.getProprietario().getNome()});
-    }*/
-
-    
+    public Veiculo getVeiculoSelecionado() {
+        int linhaSelecionada = tblVeiculos.getSelectedRow(); // Obtém a linha selecionada
+        if (linhaSelecionada >= 0) { // Quando não tem nenhum objeto selecionado retorna -1
+            DefaultTableModel modeloTabela = (DefaultTableModel) tblVeiculos.getModel();
+            Veiculo veiculoSelecionado = (Veiculo) modeloTabela.getValueAt(linhaSelecionada, 0); // A coluna 0 contém o objeto Veiculo
+            return veiculoSelecionado;
+        } else {
+            JOptionPane.showMessageDialog(this, "Nenhuma linha selecionada.");
+            return null;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEditar;
@@ -398,16 +419,14 @@ public class TelaVeiculo extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
-    private javax.swing.JCheckBox checkNaoOficial;
-    private javax.swing.JCheckBox checkOficial;
+    private javax.swing.JCheckBox ckbVeiOficial;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblOficial;
     private javax.swing.JLabel lblPlaca;
     private javax.swing.JLabel lblTitulo;
-    private javax.swing.JTable tblTable;
+    private javax.swing.JTable tblVeiculos;
     private javax.swing.JTextField txtBuscaPlaca;
     // End of variables declaration//GEN-END:variables
 }

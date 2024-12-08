@@ -6,12 +6,14 @@ package br.edu.ifsul.lpoo_sistemaestacionamentoifsul.view;
 
 import com.mycompany.lpoo_sistemaestacionamentoifsul.dao.PersistenciaJPA;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import static model.EntradaSaida_.veiculo;
 import model.Modelo;
 import model.Pessoa;
 import model.TipoVeiculo;
+import model.VeiOficial;
 import model.Veiculo;
 
 /**
@@ -21,16 +23,18 @@ import model.Veiculo;
 public class TelaCadastroVeiculo extends javax.swing.JDialog {
 
     private Veiculo veiculo;
-    //private Pessoa pessoa;
     PersistenciaJPA jpa;
     /**
      * Creates new form TelaCadastroVeiculo
      */
     public TelaCadastroVeiculo(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        jpa = new PersistenciaJPA();
-        //carregarTipoVeiculo();
         initComponents();
+        jpa = new PersistenciaJPA();
+        jPanel2.setVisible(false);
+        loadTipoVeiculo();
+        loadPessoas();
+        loadModelos();
     }
 
     /**
@@ -52,7 +56,6 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
         lblTipoVeiculo = new javax.swing.JLabel();
         lblProprietario = new javax.swing.JLabel();
         lblModelo = new javax.swing.JLabel();
-        lblOficial = new javax.swing.JLabel();
         txtPlaca = new javax.swing.JTextField();
         txtCor = new javax.swing.JTextField();
         cmbTipoVeiculo = new javax.swing.JComboBox<>();
@@ -60,10 +63,13 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
         cmbModelo = new javax.swing.JComboBox<>();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        btnNovaTela = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
+        btnAddModelo = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        lblChassi = new javax.swing.JLabel();
+        txtChassi = new javax.swing.JTextField();
+        lblRenavan = new javax.swing.JLabel();
+        txtRenavan = new javax.swing.JTextField();
         checkOficial = new javax.swing.JCheckBox();
-        checkNaoOficial = new javax.swing.JCheckBox();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -85,8 +91,6 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
         lblProprietario.setText("Proprietário:");
 
         lblModelo.setText("Modelo:");
-
-        lblOficial.setText("Oficial:");
 
         cmbTipoVeiculo.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -113,32 +117,55 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
             }
         });
 
-        btnNovaTela.setText("+");
+        btnAddModelo.setText("+");
+        btnAddModelo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddModeloActionPerformed(evt);
+            }
+        });
 
-        checkOficial.setText("Oficial");
+        lblChassi.setText("Chassi:");
 
-        checkNaoOficial.setText("Não Oficial");
+        lblRenavan.setText("Renavan:");
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(checkOficial)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(checkNaoOficial)
-                .addContainerGap(210, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblChassi)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtChassi, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblRenavan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                        .addComponent(txtRenavan, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(checkOficial)
-                    .addComponent(checkNaoOficial))
-                .addContainerGap(24, Short.MAX_VALUE))
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblChassi)
+                    .addComponent(txtChassi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblRenavan)
+                    .addComponent(txtRenavan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(24, 24, 24))
         );
+
+        checkOficial.setText("Veículo oficial");
+        checkOficial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkOficialActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -159,40 +186,37 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
                                 .addComponent(lblPlaca)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 385, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(lblModelo)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(cmbModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addComponent(lblProprietario)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(cmbProprietario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                .addComponent(lblModelo)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(cmbModelo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                .addComponent(lblProprietario)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(cmbProprietario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                                 .addComponent(lblTipoVeiculo)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(cmbTipoVeiculo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                                .addComponent(lblOficial)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                        .addComponent(btnSalvar))
-                                                    .addGroup(layout.createSequentialGroup()
-                                                        .addGap(3, 3, 3)
-                                                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                                        .addGap(0, 0, Short.MAX_VALUE)))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(73, 73, 73)
-                                        .addComponent(btnCancelar))
-                                    .addGroup(layout.createSequentialGroup()
+                                                .addComponent(cmbTipoVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE)))
                                         .addGap(18, 18, 18)
-                                        .addComponent(btnNovaTela)))))))
-                .addContainerGap(37, Short.MAX_VALUE))
+                                        .addComponent(btnAddModelo))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(checkOficial)
+                                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(108, 108, 108))))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(98, 98, 98))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -219,19 +243,16 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblModelo)
                     .addComponent(cmbModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNovaTela))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(lblOficial))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(20, 20, 20)
+                    .addComponent(btnAddModelo))
+                .addGap(35, 35, 35)
+                .addComponent(checkOficial)
+                .addGap(32, 32, 32)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(btnCancelar))
-                .addContainerGap(31, Short.MAX_VALUE))
+                    .addComponent(btnCancelar)
+                    .addComponent(btnSalvar))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         pack();
@@ -242,25 +263,27 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        if(veiculo == null){
-            veiculo = new Veiculo();
-        }
-        
-        veiculo.setPlaca(txtPlaca.getText());
-        veiculo.setCor(txtCor.getText());
-        //veiculo.setTipoVeiculo((TipoVeiculo)cmbTipoVeiculo.getSelectedItem());
-        
-        
-        jpa.conexaoAberta();
         try {
-            jpa.persist(veiculo);
-            System.out.println("Veículo cadastrada com sucesso");
+            // Inicializa veículo ou veículo oficial com os dados comuns
+            Veiculo veiculoBase = createVeiculoBase();
+
+            jpa.conexaoAberta();
+
+            if (!checkOficial.isSelected()) {
+                // Salva um veículo comum
+                jpa.persist(veiculoBase);
+            } else {
+                // Cria um VeiOficial com dados adicionais e salva
+                VeiOficial veiOficial = createVeiOficial((Veiculo) veiculoBase);
+                jpa.persist(veiOficial);
+            }
+
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Erro ao persistir veículo: "+veiculo+" \n Erro: "+ex);
+            Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            jpa.fecharConexao();
+            dispose();
         }
-        jpa.fecharConexao();
-        dispose();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void cmbTipoVeiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoVeiculoActionPerformed
@@ -268,37 +291,30 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
     }//GEN-LAST:event_cmbTipoVeiculoActionPerformed
 
     private void cmbTipoVeiculoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbTipoVeiculoItemStateChanged
-       /* TipoVeiculo tipoVeiculo = (TipoVeiculo) cmbTipoVeiculo.getSelectedItem();
-
-    if (tipoVeiculo == null) {
-        carregarTipoVeiculo(); // Método que carrega o comboBox inicialmente
-    } else {
-        jpa.conexaoAberta();
-
-        // Utilize DefaultComboBoxModel ao invés de DefaultListModel
-        DefaultComboBoxModel<TipoVeiculo> modeloLista = new DefaultComboBoxModel<>();
-
-        // Adiciona os elementos ao modelo
-        //for (TipoVeiculo veiculo : jpa.getVeiculos(tipoVeiculo)) {
-         //   modeloLista.addElement(veiculo);
-        //}
-
-        // Define o modelo no JComboBox
-        cmbTipoVeiculo.setModel(modeloLista);
-
-        jpa.fecharConexao();
-    }*/
+       
     }//GEN-LAST:event_cmbTipoVeiculoItemStateChanged
+
+    private void btnAddModeloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddModeloActionPerformed
+        TelaCadastroModelo telaModelo = new TelaCadastroModelo(null, rootPaneCheckingEnabled);
+        telaModelo.setVisible(true);
+
+        loadModelos();
+    }//GEN-LAST:event_btnAddModeloActionPerformed
+
+    private void checkOficialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOficialActionPerformed
+        boolean ehOficial = checkOficial.isSelected();
+        if (ehOficial == true) {
+            jPanel2.setVisible(true);
+        } else {
+            jPanel2.setVisible(false);
+        }
+    }//GEN-LAST:event_checkOficialActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -315,24 +331,11 @@ public class TelaCadastroVeiculo extends javax.swing.JDialog {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        /* Create and display the dialog */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 TelaCadastroVeiculo dialog = new TelaCadastroVeiculo(new javax.swing.JFrame(), true);
@@ -346,37 +349,148 @@ try {
             }
         });
     }
-    
-     /*public void carregarTipoVeiculo(){
+
+    public void loadTipoVeiculo() {
         cmbTipoVeiculo.removeAllItems();
-        for(TipoVeiculo item: TipoVeiculo.values()){
-            cmbTipoVeiculo.addItem(item);
+        for (TipoVeiculo tipo : TipoVeiculo.values()) {
+            cmbTipoVeiculo.addItem(tipo);
         }
-    }*/
+    }
+
+    public void loadPessoas() {
+        cmbProprietario.removeAllItems();
+        cmbProprietario.addItem(null);
+        jpa.conexaoAberta();
+
+        for (Pessoa p : jpa.getPessoas()) {
+            cmbProprietario.addItem(p);
+        }
+
+        jpa.fecharConexao();
+    }
+
+    public void loadModelos() {
+        cmbModelo.removeAllItems();
+        cmbModelo.addItem(null);
+        jpa.conexaoAberta();
+
+        for (Modelo p : jpa.getModelos()) {
+            cmbModelo.addItem(p);
+        }
+
+        jpa.fecharConexao();
+    }
+
+    private Veiculo createVeiculoBase() throws Exception {
+        // Inicializa o veículo base com dados comuns
+        Veiculo veiculoBase = (veiculo == null) ? new Veiculo() : veiculo;
+        try {
+            boolean desvinculacao = false;
+            veiculoBase.setPlaca(txtPlaca.getText());
+            veiculoBase.setCor(txtCor.getText());
+            veiculoBase.setTipoVeiculo((TipoVeiculo) cmbTipoVeiculo.getSelectedItem());
+            // Atualiza a Pessoa já vinculada, se existir
+            if (veiculoBase.getProprietario() == null && (cmbProprietario.getSelectedItem() != null && veiculoBase.getProprietario() != cmbProprietario.getSelectedItem())) {
+                veiculoBase.setProprietario((Pessoa) cmbProprietario.getSelectedItem());
+            } else if (veiculoBase.getProprietario() != null && cmbProprietario.getSelectedItem() == null) {
+                desvinculacao = true;
+                veiculoBase.setProprietario(null);
+
+            }
+
+            if (veiculoBase.getModelo() == null && (cmbModelo.getSelectedItem() != null && cmbModelo.getSelectedItem() != veiculoBase.getModelo())) {
+                veiculoBase.setModelo((Modelo) cmbModelo.getSelectedItem());
+            } else if (veiculoBase.getModelo() != null && cmbModelo.getSelectedItem() == null) {
+                desvinculacao = true;
+                veiculoBase.setModelo(null);
+            }
+
+            if (desvinculacao) {
+                jpa.conexaoAberta();
+                jpa.persist(veiculoBase);
+                jpa.fecharConexao();
+            }
+        } catch (Exception e) {
+            Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            return veiculoBase;
+        }
+    }
+
+    private VeiOficial createVeiOficial(Veiculo veiculoBase) throws Exception {
+        VeiOficial veiOficial = (veiculoBase instanceof VeiOficial) ? (VeiOficial) veiculoBase : new VeiOficial();
+
+        try {
+            boolean desvinculacao = false;
+
+            // Dados comuns herdados do Veiculo base
+            veiOficial.setPlaca(veiculoBase.getPlaca());
+            veiOficial.setCor(veiculoBase.getCor());
+            veiOficial.setTipoVeiculo(veiculoBase.getTipoVeiculo());
+
+            // Verifica e atualiza o proprietário
+            if (veiOficial.getProprietario() == null && cmbProprietario.getSelectedItem() != null) {
+                veiOficial.setProprietario((Pessoa) cmbProprietario.getSelectedItem());
+            } else if (veiOficial.getProprietario() != null && cmbProprietario.getSelectedItem() == null) {
+                desvinculacao = true;
+                veiOficial.setProprietario(null);
+            } else if (veiOficial.getProprietario() != null && veiOficial.getProprietario() != cmbProprietario.getSelectedItem()) {
+                veiOficial.setProprietario((Pessoa) cmbProprietario.getSelectedItem());
+            }
+
+            // Verifica e atualiza o modelo
+            if (veiOficial.getModelo() == null && cmbModelo.getSelectedItem() != null) {
+                veiOficial.setModelo((Modelo) cmbModelo.getSelectedItem());
+            } else if (veiOficial.getModelo() != null && cmbModelo.getSelectedItem() == null) {
+                desvinculacao = true;
+                veiOficial.setModelo(null);
+            } else if (veiOficial.getModelo() != null && veiOficial.getModelo() != cmbModelo.getSelectedItem()) {
+                veiOficial.setModelo((Modelo) cmbModelo.getSelectedItem());
+            }
+
+            // Adiciona os campos específicos de VeiOficial
+            veiOficial.setChassi(txtChassi.getText());
+            veiOficial.setRenavan(txtRenavan.getText());
+
+            // Persistir alterações no banco, se necessário
+            if (desvinculacao) {
+                jpa.conexaoAberta();
+                jpa.persist(veiOficial);
+                jpa.fecharConexao();
+            }
+
+        } catch (Exception e) {
+            Logger.getLogger(TelaCadastroVeiculo.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            return veiOficial;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddModelo;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnNovaTela;
     private javax.swing.JButton btnSalvar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JCheckBox checkNaoOficial;
     private javax.swing.JCheckBox checkOficial;
-    private javax.swing.JComboBox<String> cmbModelo;
-    private javax.swing.JComboBox<String> cmbProprietario;
+    private javax.swing.JComboBox<Modelo> cmbModelo;
+    private javax.swing.JComboBox<Pessoa> cmbProprietario;
     private javax.swing.JComboBox<TipoVeiculo> cmbTipoVeiculo;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JLabel lblChassi;
     private javax.swing.JLabel lblCor;
     private javax.swing.JLabel lblModelo;
-    private javax.swing.JLabel lblOficial;
     private javax.swing.JLabel lblPlaca;
     private javax.swing.JLabel lblProprietario;
+    private javax.swing.JLabel lblRenavan;
     private javax.swing.JLabel lblTipoVeiculo;
     private javax.swing.JLabel lblTitulo;
+    private javax.swing.JTextField txtChassi;
     private javax.swing.JTextField txtCor;
     private javax.swing.JTextField txtPlaca;
+    private javax.swing.JTextField txtRenavan;
     // End of variables declaration//GEN-END:variables
 
     
@@ -386,9 +500,23 @@ public Veiculo getVeiculo() {
 
     public void setVeiculo(Veiculo veiculo) {
         this.veiculo = veiculo;
+
+//        Lógica de Negócio: uma vez criado um veículo oficial ou um veículo o tipo dele não poderá ser alterado
+        checkOficial.setVisible(false);
+
+        txtCor.setText(veiculo.getCor());
         txtPlaca.setText(veiculo.getPlaca());
-        //cmbTipoVeiculo.setSelectedItem(veiculo.getTipoVeiculo());
+        cmbTipoVeiculo.setSelectedItem(veiculo.getTipoVeiculo());
+        cmbProprietario.setSelectedItem(veiculo.getProprietario());
+        cmbModelo.setSelectedItem(veiculo.getModelo());
+
+        if (veiculo instanceof VeiOficial) {
+            checkOficial.setSelected(true);
+            jPanel2.setVisible(true);
+            VeiOficial vei = (VeiOficial) veiculo;
+            txtChassi.setText(vei.getChassi());
+            txtRenavan.setText(vei.getRenavan());
+
+        }
     }
-    
-    
 }

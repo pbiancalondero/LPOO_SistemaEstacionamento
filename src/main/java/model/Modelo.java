@@ -5,6 +5,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -22,7 +23,7 @@ import javax.persistence.Table;
  */ 
 @Entity
 @Table(name = "tb_modelo")
-public class Modelo implements Serializable{
+public class Modelo implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     private int id;
@@ -56,6 +57,38 @@ public class Modelo implements Serializable{
     public void setMarca(Marca marca) {
         this.marca = marca;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.id;
+        hash = 67 * hash + Objects.hashCode(this.descricao);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Modelo other = (Modelo) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return Objects.equals(this.descricao, other.descricao);
+    }
+
+    @Override
+    public String toString() {
+        return descricao + "(" + marca + ')';
+    }
+
     
     
 }

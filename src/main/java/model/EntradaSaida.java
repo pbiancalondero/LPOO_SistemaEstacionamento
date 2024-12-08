@@ -21,6 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -32,25 +34,36 @@ import javax.persistence.Table;
 //@DiscriminatorColumn adiciona uma coluna para distinguir o tipo de ES, enquanto @DiscriminatorValue indica o valor que será usado para a subclasse ESOficial.
 @Table(name = "tb_entradasaida")
 public class EntradaSaida implements Serializable{
-    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
     private Date data;
     
     @Enumerated(EnumType.STRING)
+    //não incluindo anotação o JPA assume como padrão que será mapeado no BD
+    // como inteiro referente ao índice do valor informado no Enum
+    // outra opção que podemos usar é o tipo EnumType.STRING
     private TipoMovimentacao tipoMovimentacao;
     
+    
+    //    Validação do Mapeamento Bidirecional: Garantir que o mapeamento @OneToMany em Veiculo 
+//    e @ManyToOne em ES estejam corretamente configurados para refletir o relacionamento bidirecional.
     @ManyToOne
     @JoinColumn(name = "es_veiculo")
     private final Veiculo veiculo;
 
+    public EntradaSaida() {
+        veiculo = null;
+    }
+
+    
     public EntradaSaida(TipoMovimentacao tipo, Veiculo veiculo) {
         tipoMovimentacao = tipo;
         this.veiculo = veiculo;
-        this.veiculo.addMovimentacao(this);
+        
         data = new Date();
     }
     
@@ -82,6 +95,11 @@ public class EntradaSaida implements Serializable{
 
     public Veiculo getVeiculo() {
         return veiculo;
+    }
+
+    @Override
+    public String toString() {
+        return veiculo.getPlaca();
     }
 
     

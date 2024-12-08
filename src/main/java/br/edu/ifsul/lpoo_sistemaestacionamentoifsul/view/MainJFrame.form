@@ -31,6 +31,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Movimenta&#xe7;&#xf5;es"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuMovimentacoesActionPerformed"/>
+          </Events>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="miEntradaVeiculo">
               <Properties>
@@ -41,6 +44,14 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Sa&#xed;da"/>
               </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miMovDia">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Movimenta&#xe7;&#xf5;es do dia"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miMovDiaActionPerformed"/>
+              </Events>
             </MenuItem>
           </SubComponents>
         </Menu>

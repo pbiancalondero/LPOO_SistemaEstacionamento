@@ -6,11 +6,17 @@ package com.mycompany.lpoo_sistemaestacionamentoifsul.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
+import model.EntradaSaida;
+import model.Modelo;
 import model.Pessoa;
 import model.TipoVeiculo;
 import model.Veiculo;
@@ -62,6 +68,9 @@ public class PersistenciaJPA implements InterfaceBD {
             if (entity.getTransaction().isActive()) {
                 entity.getTransaction().rollback();
             }
+            Logger.getLogger(PersistenciaJPA.class.getName()).log(Level.SEVERE, "Erro ao persistir a entidade: " + o.getClass().getSimpleName(), e);
+            e.printStackTrace(); // Isso imprimirá o erro completo no console
+            throw e;
         }
     }
 
@@ -76,7 +85,8 @@ public class PersistenciaJPA implements InterfaceBD {
             entity.remove(o);
             entity.getTransaction().commit();
         } catch (Exception e) {
-            System.err.println("Erro ao remover item: "+e);
+            System.err.println("Erro ao remover entidade: " + o.getClass().getSimpleName());
+            e.printStackTrace();
             if (entity.getTransaction().isActive()) {
                 entity.getTransaction().rollback();
             }
@@ -110,95 +120,127 @@ public class PersistenciaJPA implements InterfaceBD {
 
     }
 
-    
     public List<Pessoa> getPessoas(VinculoPessoa vinculoSelecionado) {
         entity = getEntityManager();
+
         try {
             TypedQuery<Pessoa> query
                     = entity.createQuery("Select p from Pessoa p where p.vinculoPessoa = '"
-                            +vinculoSelecionado+"'", 
+                            + vinculoSelecionado + "'",
                             Pessoa.class);
             return query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro ao buscar Pessoas: " + e);
             return null;
         }
+
     }
-    
+
     public List<Pessoa> getPessoas(String nome) {
         entity = getEntityManager();
+
         try {
             TypedQuery<Pessoa> query
-                    = entity.createQuery("Select p from Pessoa p where lower(p.nome) LIKE :n", 
+                    = entity.createQuery("Select p from Pessoa p where lower(p.nome) LIKE :n",
                             Pessoa.class);
-            query.setParameter("n", "%"+nome.toLowerCase()+"%");
+            query.setParameter("n", "%" + nome.toLowerCase() + "%");
             return query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro ao buscar Pessoas: " + e);
             return null;
         }
+
     }
-    
-    
+
     public List<Veiculo> getVeiculos() {
-        entity = getEntityManager();
-
+        EntityManager em = getEntityManager();
         try {
             TypedQuery<Veiculo> query
-                    = entity.createQuery("Select v from Veiculo v", Veiculo.class);
+                    = em.createQuery("SELECT v FROM Veiculo v", Veiculo.class);
             return query.getResultList();
         } catch (Exception e) {
-            System.err.println("Erro ao buscar Veiculos: " + e);
+            e.printStackTrace();
             return null;
         }
-
     }
-    
-    
+
     public List<Veiculo> getVeiculos(String placa) {
-        entity = getEntityManager();
+        EntityManager em = getEntityManager();
         try {
             TypedQuery<Veiculo> query
-                    = entity.createQuery("Select v from Veiculo v where lower(v.placa) LIKE :n", 
-                            Veiculo.class);
-            query.setParameter("n", "%"+placa.toLowerCase()+"%");
+                    = em.createQuery("SELECT v FROM Veiculo v where lower(v.placa) LIKE :p", Veiculo.class);
+            query.setParameter("p", "%" + placa.toLowerCase() + "%");
             return query.getResultList();
         } catch (Exception e) {
-            System.err.println("Erro ao buscar Veículos: " + e);
+            e.printStackTrace();
             return null;
         }
     }
-    
-    public List<Veiculo> getVeiculosOficiais(boolean oficial) {
-    entity = getEntityManager();
-    try {
-        TypedQuery<Veiculo> query = entity.createQuery(
-                "Select v from Veiculo v where v.oficial = :oficial", 
-                Veiculo.class);
-        query.setParameter("oficial", oficial);
-        return query.getResultList();
-    } catch (Exception e) {
-        System.err.println("Erro ao buscar veículos oficiais: " + e);
-        return null;
-    }
-}
-    
-    
-    public List<Veiculo> getVeiculos(TipoVeiculo tiposelecionado) {
-        entity = getEntityManager();
-        try {
-            TypedQuery<Veiculo> query = entity.createQuery(
-                    "Select v from Veiculo p where v.TipoPessoa = '"
-                            +tiposelecionado+"'", 
-                            Veiculo.class);
-            return query.getResultList();
-        } catch (Exception e) {
-            System.err.println("Erro ao buscar Pessoas: " + e);
-            return null;
-        }
-    }
-    
-    
 
-    
+    public List<Veiculo> getVeiculos(boolean apenasOficiais) {
+        EntityManager em = getEntityManager();
+
+        if (apenasOficiais) {
+            // Busca apenas veículos oficiais
+            TypedQuery<Veiculo> query = em.createQuery(
+                    //O operador TYPE no JPQL permite verificar o tipo de entidade em herança
+                    "SELECT v FROM Veiculo v WHERE TYPE(v) = VeiOficial", Veiculo.class);
+            return query.getResultList();
+        } else {
+            // Busca todos os veículos
+            TypedQuery<Veiculo> query = em.createQuery(
+                    "SELECT v FROM Veiculo v", Veiculo.class);
+            return query.getResultList();
+        }
+    }
+
+    public Veiculo findVeiculoByPlaca(String placa) {
+        EntityManager em = getEntityManager();
+        Veiculo veiculo = null;
+
+        try {
+            em.getTransaction().begin();
+            veiculo = em.createQuery("SELECT v FROM Veiculo v WHERE upper(v.placa) = :placa", Veiculo.class)
+                    .setParameter("placa", placa.toUpperCase())
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            System.out.println("Nenhum veículo encontrado com a placa: " + placa);
+        } catch (Exception e) {
+            Logger.getLogger(PersistenciaJPA.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            em.close();
+        }
+
+        return veiculo;
+    }
+
+    // funções para listar dados 
+    public List<Modelo> getModelos() {
+        entity = getEntityManager();
+
+        try {
+            TypedQuery<Modelo> query
+                    = entity.createQuery("Select p from Modelo p", Modelo.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar Modelos de Veículos: " + e);
+            return null;
+        }
+
+    }
+
+    // funções para listar dados 
+    public List<EntradaSaida> getMovimentacoes(Date data) {
+        entity = getEntityManager();
+
+        try {
+            TypedQuery<EntradaSaida> query
+                    = entity.createQuery("Select p from EntradaSaida p", EntradaSaida.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar Movimentações de Veículos (registros de entrada e saída)" + e);
+            return null;
+        }
+
+    }
 }

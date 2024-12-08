@@ -28,12 +28,11 @@ import javax.persistence.Table;
 @Table(name = "tb_pessoa")
 public class Pessoa implements Serializable {
     
-    
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     
-    @Column(length = 50, nullable = false)
+    @Column(nullable = false, length = 50)
     private String nome;
     
     @Column(length = 20)
@@ -41,16 +40,13 @@ public class Pessoa implements Serializable {
     
     @Column(length = 50)
     private String email;
-
+    
     @Enumerated(EnumType.STRING)
     private VinculoPessoa vinculoPessoa;
-   
+    
     
     @OneToMany(mappedBy = "proprietario", cascade = CascadeType.ALL)
-    private List<Veiculo> listaVeiculos; 
-    
-    
-  
+    private List<Veiculo> listaVeiculos;
 
     public Pessoa() {
         listaVeiculos = new ArrayList<>();
@@ -105,11 +101,36 @@ public class Pessoa implements Serializable {
     public List<Veiculo> getListaVeiculos() {
         return listaVeiculos;
     }
-    
+
     @Override
     public String toString() {
-        return "("+nome+" - "+vinculoPessoa+")";
+        return nome+" ("+vinculoPessoa+")";
     }
-    
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + this.id;
+        hash = 79 * hash + Objects.hashCode(this.nome);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Pessoa other = (Pessoa) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return Objects.equals(this.nome, other.nome);
+    }
+
 }

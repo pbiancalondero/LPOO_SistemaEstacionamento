@@ -7,6 +7,7 @@ package model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -32,12 +33,12 @@ import org.hibernate.annotations.ManyToAny;
 @Table(name = "tb_veiculo")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_veiculo", discriminatorType = DiscriminatorType.STRING)
-public class Veiculo implements Serializable{
+public class Veiculo implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Id
     private int id;
     
-    @Column(nullable = false, length = 7)
+    @Column(nullable = false, length = 7, unique = true)
     private String placa;
     
     @Column(length = 20)
@@ -48,15 +49,15 @@ public class Veiculo implements Serializable{
     
     
     @ManyToOne
-    @JoinColumn(name = "modelo_id")
+    @JoinColumn(name = "modelo_id", nullable = true)
     private Modelo modelo;
+    
     
     @OneToMany(mappedBy = "veiculo")
     private List<EntradaSaida> listaMovimentacoes;
-    
-    
+
     @ManyToOne
-    @JoinColumn(name = "veiculo_proprietario")
+    @JoinColumn(name = "veiculo_proprietario", nullable = true)
     private Pessoa proprietario;
     
     
@@ -107,9 +108,9 @@ public class Veiculo implements Serializable{
     }
     
     public void addMovimentacao(EntradaSaida movimentacao){
-       listaMovimentacoes.add(movimentacao);
-   }
-
+        listaMovimentacoes.add(movimentacao);
+    }
+//
     public Modelo getModelo() {
         return modelo;
     }
@@ -121,15 +122,65 @@ public class Veiculo implements Serializable{
     public Pessoa getProprietario() {
         return proprietario;
     }
-
+//
     public void setProprietario(Pessoa proprietario) {
         this.proprietario = proprietario;
     }
-
+//
     public List<EntradaSaida> getListaMovimentacoes() {
         return listaMovimentacoes;
     }
-    
-    
-    
+//    
+
+    @Override
+    public String toString() {
+        return placa;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + this.id;
+        hash = 61 * hash + Objects.hashCode(this.placa);
+        hash = 61 * hash + Objects.hashCode(this.cor);
+        hash = 61 * hash + Objects.hashCode(this.tipoVeiculo);
+        hash = 61 * hash + Objects.hashCode(this.modelo);
+        hash = 61 * hash + Objects.hashCode(this.listaMovimentacoes);
+        hash = 61 * hash + Objects.hashCode(this.proprietario);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Veiculo other = (Veiculo) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        if (!Objects.equals(this.placa, other.placa)) {
+            return false;
+        }
+        if (!Objects.equals(this.cor, other.cor)) {
+            return false;
+        }
+        if (this.tipoVeiculo != other.tipoVeiculo) {
+            return false;
+        }
+        if (!Objects.equals(this.modelo, other.modelo)) {
+            return false;
+        }
+        if (!Objects.equals(this.listaMovimentacoes, other.listaMovimentacoes)) {
+            return false;
+        }
+        return Objects.equals(this.proprietario, other.proprietario);
+    }
+
 }
